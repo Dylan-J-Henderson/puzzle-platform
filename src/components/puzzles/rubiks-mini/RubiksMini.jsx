@@ -88,16 +88,6 @@ const RubiksMini = () => {
             </p>
           </div>
         )}
-
-        <div className="mt-6 p-4 bg-cyan-900 bg-opacity-30 rounded-lg">
-          <h4 className="text-white font-semibold mb-2 text-sm">2x2x2 Info</h4>
-          <ul className="text-xs text-gray-300 space-y-1">
-            <li>• 8 corner cubies only</li>
-            <li>• No center or edge pieces</li>
-            <li>• Also called Pocket Cube</li>
-            <li>• Great for beginners!</li>
-          </ul>
-        </div>
       </div>
     </div>
   );

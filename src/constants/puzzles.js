@@ -27,22 +27,7 @@ export const PUZZLES = {
     description: '4x4x4 advanced puzzle',
     component: RubiksRevenge,
     icon: '🎲',
-  },
-  // Add more puzzles here as you build them
-  // PYRAMINX: {
-  //   id: 'pyraminx',
-  //   name: 'Pyraminx',
-  //   description: 'Tetrahedral twisty puzzle',
-  //   component: Pyraminx,
-  //   icon: '🔺',
-  // },
-  // MEGAMINX: {
-  //   id: 'megaminx',
-  //   name: 'Megaminx',
-  //   description: 'Dodecahedral puzzle',
-  //   component: Megaminx,
-  //   icon: '⬢',
-  // },
+  }
 };
 
 export const getPuzzleById = (id) => {

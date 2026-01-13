@@ -88,16 +88,6 @@ const RubiksRevenge = () => {
             </p>
           </div>
         )}
-
-        <div className="mt-6 p-4 bg-indigo-900 bg-opacity-30 rounded-lg">
-          <h4 className="text-white font-semibold mb-2 text-sm">4x4x4 Info</h4>
-          <ul className="text-xs text-gray-300 space-y-1">
-            <li>• 64 cubies total</li>
-            <li>• No fixed center pieces</li>
-            <li>• Inner + outer layer turns</li>
-            <li>• More complex than 3x3x3</li>
-          </ul>
-        </div>
       </div>
     </div>
   );
