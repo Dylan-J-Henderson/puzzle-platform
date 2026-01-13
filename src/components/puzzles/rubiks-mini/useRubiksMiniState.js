@@ -1,8 +1,8 @@
-// src/components/puzzles/rubiks-revenge/useRubiksRevengeState.js
+// src/components/puzzles/rubiks-mini/useRubiksMiniState.js
 import { useState, useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
-export const useRubiksRevengeState = () => {
+export const useRubiksMiniState = () => {
   const cubeGroupRef = useRef(null);
   const cubiesRef = useRef([]);
   const [moveHistory, setMoveHistory] = useState([]);
@@ -11,7 +11,7 @@ export const useRubiksRevengeState = () => {
   const [isScrambling, setIsScrambling] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
 
-  // Initialize 4x4x4 cube
+  // Initialize 2x2x2 cube
   useEffect(() => {
     const cubeGroup = new THREE.Group();
     cubeGroupRef.current = cubeGroup;
@@ -30,20 +30,23 @@ export const useRubiksRevengeState = () => {
     const gap = 0.05;
     const spacing = size + gap;
 
-    // Create 4x4x4 grid of cubies
-    for (let x = -1.5; x <= 1.5; x += 1) {
-      for (let y = -1.5; y <= 1.5; y += 1) {
-        for (let z = -1.5; z <= 1.5; z += 1) {
+    // Create 2x2x2 grid of cubies (only corners)
+    const positions = [-0.5, 0.5];
+    for (let xi = 0; xi < positions.length; xi++) {
+      for (let yi = 0; yi < positions.length; yi++) {
+        for (let zi = 0; zi < positions.length; zi++) {
+          const x = positions[xi];
+          const y = positions[yi];
+          const z = positions[zi];
           const geometry = new THREE.BoxGeometry(size, size, size);
           
-          // Determine which faces should be colored
           const materials = [
-            new THREE.MeshLambertMaterial({ color: x === 1.5 ? colors[0] : 0x000000 }),
-            new THREE.MeshLambertMaterial({ color: x === -1.5 ? colors[1] : 0x000000 }),
-            new THREE.MeshLambertMaterial({ color: y === 1.5 ? colors[2] : 0x000000 }),
-            new THREE.MeshLambertMaterial({ color: y === -1.5 ? colors[3] : 0x000000 }),
-            new THREE.MeshLambertMaterial({ color: z === 1.5 ? colors[4] : 0x000000 }),
-            new THREE.MeshLambertMaterial({ color: z === -1.5 ? colors[5] : 0x000000 }),
+            new THREE.MeshLambertMaterial({ color: x === 0.5 ? colors[0] : 0x000000 }),
+            new THREE.MeshLambertMaterial({ color: x === -0.5 ? colors[1] : 0x000000 }),
+            new THREE.MeshLambertMaterial({ color: y === 0.5 ? colors[2] : 0x000000 }),
+            new THREE.MeshLambertMaterial({ color: y === -0.5 ? colors[3] : 0x000000 }),
+            new THREE.MeshLambertMaterial({ color: z === 0.5 ? colors[4] : 0x000000 }),
+            new THREE.MeshLambertMaterial({ color: z === -0.5 ? colors[5] : 0x000000 }),
           ];
 
           const cubie = new THREE.Mesh(geometry, materials);
@@ -77,7 +80,7 @@ export const useRubiksRevengeState = () => {
 
     const cubesToRotate = cubiesRef.current.filter((cubie) => {
       const pos = cubie.position;
-      const threshold = 0.5;
+      const threshold = 0.25;
       
       if (axis === 'x') return Math.abs(pos.x - layer) < threshold;
       if (axis === 'y') return Math.abs(pos.y - layer) < threshold;
@@ -154,7 +157,7 @@ export const useRubiksRevengeState = () => {
 
     const cubesToRotate = cubiesRef.current.filter((cubie) => {
       const pos = cubie.position;
-      const threshold = 0.5;
+      const threshold = 0.25;
       
       if (axis === 'x') return Math.abs(pos.x - layer) < threshold;
       if (axis === 'y') return Math.abs(pos.y - layer) < threshold;
@@ -212,7 +215,7 @@ export const useRubiksRevengeState = () => {
     const solved = cubiesRef.current.every((cubie) => {
       const initialPos = cubie.userData.initialPosition;
       const currentPos = cubie.position;
-      const threshold = 0.5;
+      const threshold = 0.1;
 
       const posMatch = 
         Math.abs(currentPos.x - (initialPos.x * spacing)) < threshold &&
@@ -244,39 +247,21 @@ export const useRubiksRevengeState = () => {
     const size = 0.95;
     const gap = 0.05;
     const spacing = size + gap;
-    
-    // Calculate actual layer positions
-    const outerLayer = 1.5 * spacing;
-    const innerLayer = 0.5 * spacing;
+    const layer = 0.5 * spacing;
     
     const moves = {
-      // Outer layers (same as 3x3)
-      'R': () => rotateFace('x', outerLayer, 1),
-      "R'": () => rotateFace('x', outerLayer, -1),
-      'L': () => rotateFace('x', -outerLayer, -1),
-      "L'": () => rotateFace('x', -outerLayer, 1),
-      'U': () => rotateFace('y', outerLayer, 1),
-      "U'": () => rotateFace('y', outerLayer, -1),
-      'D': () => rotateFace('y', -outerLayer, -1),
-      "D'": () => rotateFace('y', -outerLayer, 1),
-      'F': () => rotateFace('z', outerLayer, 1),
-      "F'": () => rotateFace('z', outerLayer, -1),
-      'B': () => rotateFace('z', -outerLayer, -1),
-      "B'": () => rotateFace('z', -outerLayer, 1),
-      
-      // Inner layers (4x4 specific)
-      'r': () => rotateFace('x', innerLayer, 1),
-      "r'": () => rotateFace('x', innerLayer, -1),
-      'l': () => rotateFace('x', -innerLayer, -1),
-      "l'": () => rotateFace('x', -innerLayer, 1),
-      'u': () => rotateFace('y', innerLayer, 1),
-      "u'": () => rotateFace('y', innerLayer, -1),
-      'd': () => rotateFace('y', -innerLayer, -1),
-      "d'": () => rotateFace('y', -innerLayer, 1),
-      'f': () => rotateFace('z', innerLayer, 1),
-      "f'": () => rotateFace('z', innerLayer, -1),
-      'b': () => rotateFace('z', -innerLayer, -1),
-      "b'": () => rotateFace('z', -innerLayer, 1),
+      'R': () => rotateFace('x', layer, 1),
+      "R'": () => rotateFace('x', layer, -1),
+      'L': () => rotateFace('x', -layer, -1),
+      "L'": () => rotateFace('x', -layer, 1),
+      'U': () => rotateFace('y', layer, 1),
+      "U'": () => rotateFace('y', layer, -1),
+      'D': () => rotateFace('y', -layer, -1),
+      "D'": () => rotateFace('y', -layer, 1),
+      'F': () => rotateFace('z', layer, 1),
+      "F'": () => rotateFace('z', layer, -1),
+      'B': () => rotateFace('z', -layer, -1),
+      "B'": () => rotateFace('z', -layer, 1),
     };
 
     if (moves[move]) {
@@ -293,16 +278,13 @@ export const useRubiksRevengeState = () => {
     const size = 0.95;
     const gap = 0.05;
     const spacing = size + gap;
-    const outerLayer = 1.5 * spacing;
-    const innerLayer = 0.5 * spacing;
+    const layer = 0.5 * spacing;
     
-    const outerMoves = ['R', "R'", 'L', "L'", 'U', "U'", 'D', "D'", 'F', "F'", 'B', "B'"];
-    const innerMoves = ['r', "r'", 'l', "l'", 'u', "u'", 'd', "d'", 'f', "f'", 'b', "b'"];
-    const allMoves = [...outerMoves, ...innerMoves];
+    const moves = ['R', "R'", 'L', "L'", 'U', "U'", 'D', "D'", 'F', "F'", 'B', "B'"];
     const scrambleSequence = [];
     
-    for (let i = 0; i < 40; i++) {
-      scrambleSequence.push(allMoves[Math.floor(Math.random() * allMoves.length)]);
+    for (let i = 0; i < 15; i++) {
+      scrambleSequence.push(moves[Math.floor(Math.random() * moves.length)]);
     }
 
     const shrinkDuration = 300;
@@ -322,30 +304,18 @@ export const useRubiksRevengeState = () => {
       } else {
         scrambleSequence.forEach((move) => {
           const moveHandlers = {
-            'R': () => instantRotate('x', outerLayer, 1),
-            "R'": () => instantRotate('x', outerLayer, -1),
-            'L': () => instantRotate('x', -outerLayer, -1),
-            "L'": () => instantRotate('x', -outerLayer, 1),
-            'U': () => instantRotate('y', outerLayer, 1),
-            "U'": () => instantRotate('y', outerLayer, -1),
-            'D': () => instantRotate('y', -outerLayer, -1),
-            "D'": () => instantRotate('y', -outerLayer, 1),
-            'F': () => instantRotate('z', outerLayer, 1),
-            "F'": () => instantRotate('z', outerLayer, -1),
-            'B': () => instantRotate('z', -outerLayer, -1),
-            "B'": () => instantRotate('z', -outerLayer, 1),
-            'r': () => instantRotate('x', innerLayer, 1),
-            "r'": () => instantRotate('x', innerLayer, -1),
-            'l': () => instantRotate('x', -innerLayer, -1),
-            "l'": () => instantRotate('x', -innerLayer, 1),
-            'u': () => instantRotate('y', innerLayer, 1),
-            "u'": () => instantRotate('y', innerLayer, -1),
-            'd': () => instantRotate('y', -innerLayer, -1),
-            "d'": () => instantRotate('y', -innerLayer, 1),
-            'f': () => instantRotate('z', innerLayer, 1),
-            "f'": () => instantRotate('z', innerLayer, -1),
-            'b': () => instantRotate('z', -innerLayer, -1),
-            "b'": () => instantRotate('z', -innerLayer, 1),
+            'R': () => instantRotate('x', layer, 1),
+            "R'": () => instantRotate('x', layer, -1),
+            'L': () => instantRotate('x', -layer, -1),
+            "L'": () => instantRotate('x', -layer, 1),
+            'U': () => instantRotate('y', layer, 1),
+            "U'": () => instantRotate('y', layer, -1),
+            'D': () => instantRotate('y', -layer, -1),
+            "D'": () => instantRotate('y', -layer, 1),
+            'F': () => instantRotate('z', layer, 1),
+            "F'": () => instantRotate('z', layer, -1),
+            'B': () => instantRotate('z', -layer, -1),
+            "B'": () => instantRotate('z', -layer, 1),
           };
           if (moveHandlers[move]) {
             moveHandlers[move]();

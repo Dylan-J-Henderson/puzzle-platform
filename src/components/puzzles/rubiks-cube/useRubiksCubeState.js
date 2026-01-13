@@ -1,8 +1,8 @@
-// src/components/puzzles/rubiks-cube/useCubeState.js
+// src/components/puzzles/rubiks-cube/useRubiksCubeState.js
 import { useState, useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
-export const useCubeState = () => {
+export const useRubiksCubeState = () => {
   const cubeGroupRef = useRef(null);
   const cubiesRef = useRef([]);
   const [moveHistory, setMoveHistory] = useState([]);

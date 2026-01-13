@@ -1,4 +1,5 @@
 // src/constants/puzzles.js
+import RubiksMini from '../components/puzzles/rubiks-mini/RubiksMini';
 import RubiksCube from '../components/puzzles/rubiks-cube/RubiksCube';
 import RubiksRevenge from '../components/puzzles/rubiks-revenge/RubiksRevenge';
 // Import other puzzles as you create them
@@ -6,6 +7,13 @@ import RubiksRevenge from '../components/puzzles/rubiks-revenge/RubiksRevenge';
 // import Megaminx from '../components/puzzles/megaminx/Megaminx';
 
 export const PUZZLES = {
+  RUBIKS_MINI: {
+    id: 'rubiks-mini',
+    name: "Rubik's Mini",
+    description: '2x2x2 classic puzzle',
+    component: RubiksMini,
+    icon: '🧊',
+  },
   RUBIKS_CUBE: {
     id: 'rubiks-cube',
     name: "Rubik's Cube",
