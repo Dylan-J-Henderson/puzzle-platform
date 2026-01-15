@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 5%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 185 70% 50%;
+    --primary-foreground: 0 0% 5%;
+
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 185 70% 50%;
+    --accent-foreground: 0 0% 5%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 185 70% 50%;
+
+    --radius: 0.75rem;
+
+    /* Rubik's colors */
+    --rubiks-white: 0 0% 95%;
+    --rubiks-yellow: 48 95% 55%;
+    --rubiks-red: 0 80% 50%;
+    --rubiks-orange: 25 95% 55%;
+    --rubiks-blue: 220 85% 50%;
+    --rubiks-green: 140 70% 40%;
+
+    /* Glass effect */
+    --glass-bg: 0 0% 10% / 0.8;
+    --glass-border: 0 0% 100% / 0.1;
+  }
+
+  .dark {
+    --background: 0 0% 5%;
+    --foreground: 0 0% 95%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-card/80 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+
+  .control-button {
+    @apply px-4 py-2 rounded-lg bg-secondary hover:bg-secondary/80 
+           text-foreground font-medium transition-all duration-200
+           hover:scale-105 active:scale-95 border border-white/5
+           shadow-lg shadow-black/20;
+  }
+
+  .control-button-primary {
+    @apply px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 
+           text-primary-foreground font-semibold transition-all duration-200
+           hover:scale-105 active:scale-95 shadow-lg shadow-primary/30;
+  }
+
+  .joystick-area {
+    @apply fixed bottom-6 right-6 w-28 h-28 rounded-full 
+           bg-white/5 border-2 border-white/20 backdrop-blur-sm
+           flex items-center justify-center;
+  }
+
+  .joystick-knob {
+    @apply w-12 h-12 rounded-full bg-primary/60 border-2 border-primary
+           shadow-lg shadow-primary/40;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
