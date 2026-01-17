@@ -1,3 +1,13 @@
+/**
+ * @file ControlButtons.jsx
+ * @description Scramble and reset buttons
+ * 
+ * @param {Object} props
+ * @param {Function} props.onScramble - Scramble button callback
+ * @param {Function} props.onReset - Reset button callback
+ * @param {boolean} props.disabled - Whether buttons are disabled
+ */
+
 export const ControlButtons = ({ onScramble, onReset, disabled }) => (
   <div className="flex gap-2">
     <button 

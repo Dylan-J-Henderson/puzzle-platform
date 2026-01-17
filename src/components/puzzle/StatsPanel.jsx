@@ -1,3 +1,13 @@
+/**
+ * @file StatsPanel.jsx
+ * @description Displays puzzle statistics (time, moves, status)
+ * 
+ * @param {Object} props
+ * @param {number} props.time - Elapsed time in milliseconds
+ * @param {number} props.moves - Number of moves made
+ * @param {boolean} props.isSolved - Whether puzzle is solved
+ */
+
 export const StatsPanel = ({ time, moves, isSolved }) => {
   const formatTime = (ms) => {
     const minutes = Math.floor(ms / 60000);

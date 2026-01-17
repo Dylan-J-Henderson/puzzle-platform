@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef } from 'react';
-import { PuzzleRenderer } from '../rendering/PuzzleRenderer';
+// src/components/PuzzleRendererComponent.jsx
+import { useEffect, useMemo, useRef, useImperativeHandle, forwardRef } from 'react';
+import { PuzzleRenderer } from '../../rendering/PuzzleRenderer';
 
-export const PuzzleRendererComponent = ({ puzzle, size, onMoveComplete, onSolved, onRotationStart }) => {
+export const PuzzleRendererComponent = forwardRef(({ puzzle, size, onMoveComplete, onSolved, onRotationStart }, ref) => {
   const mountRef = useRef(null);
   const rendererRef = useRef(null);
 
@@ -25,7 +26,7 @@ export const PuzzleRendererComponent = ({ puzzle, size, onMoveComplete, onSolved
       renderer.dispose();
       rendererRef.current = null;
     };
-  }, []); // Still empty → we update later
+  }, []);
 
   // Keep puzzle & size in sync
   useEffect(() => {
@@ -34,5 +35,13 @@ export const PuzzleRendererComponent = ({ puzzle, size, onMoveComplete, onSolved
     }
   }, [puzzle, size]);
 
+  // Expose renderer methods to parent component
+  useImperativeHandle(ref, () => ({
+    scramble: () => rendererRef.current?.scramble(),
+    reset: () => rendererRef.current?.reset(),
+    animateTransition: (...args) => rendererRef.current?.animateTransition(...args),
+    animatePuzzleSwitch: (...args) => rendererRef.current?.animatePuzzleSwitch(...args),
+  }), []);
+
   return <div ref={mountRef} className="flex-1 w-full" style={{ touchAction: 'none' }} />;
-};
+});

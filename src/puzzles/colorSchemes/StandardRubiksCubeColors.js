@@ -1,8 +1,15 @@
+/**
+ * @file StandardRubiksCubeColors.js
+ * @description Standard Rubik's Cube color scheme
+ * 
+ * Implements the official WCA (World Cube Association) color scheme:
+ * - White opposite Yellow
+ * - Red opposite Orange
+ * - Blue opposite Green
+ */
+
 import { ColorScheme } from '../../core/valueObjects/ColorScheme';
 
-/**
- * Standard Rubik's Cube color scheme
- */
 export class StandardRubiksCubeColors extends ColorScheme {
   constructor() {
     super({

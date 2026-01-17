@@ -1,3 +1,24 @@
+/**
+ * @file PuzzleRenderer.js
+ * @description A 3D rendering engine for interactive twisty puzzles
+ * 
+ * Manages the Three.js rendering pipeline and user interactions for twisty puzzles.
+ * Handles scene setup, lighting, camera control, drag interactions, animations,
+ * and puzzle state synchronization.
+ * 
+ * @example
+ * const renderer = new PuzzleRenderer(
+ *   mountElement,
+ *   new RubiksCube(),
+ *   3,
+ *   {
+ *     onMove: () => console.log('Move completed'),
+ *     onSolved: () => console.log('Puzzle solved!'),
+ *     onRotationStart: () => console.log('Rotation started')
+ *   }
+ * );
+ */
+
 import * as THREE from 'three';
 import { CameraController } from './CameraController';
 import { Rotation } from '../core/valueObjects/Rotation';
@@ -7,6 +28,18 @@ export class PuzzleRenderer {
   static ANIMATION_DURATION = 800;
   static ROTATION_SNAP_DURATION = 150;
 
+  /**
+   * Creates a new PuzzleRenderer instance
+   * 
+   * @param mountElement - DOM element to attach the canvas
+   * @param puzzle - Puzzle instance to render
+   * @param size - Size variant of the puzzle (e.g., 3 for 3x3x3)
+   * @param callbacks - Event callbacks object
+   * @param callbacks.onMove - Called when a move is completed
+   * @param callbacks.onSolved - Called when puzzle is solved
+   * @param callbacks.onRotationStart - Called when rotation begins
+   * @param raycaster - Raycaster for mouse picking (optional)
+   */
   constructor(
     mountElement, 
     puzzle, 
@@ -47,6 +80,10 @@ export class PuzzleRenderer {
     this._init();
   }
 
+  /**
+   * Initializes all renderer components and starts the render loop
+   * @private
+   */
   _init() {
     this._setupScene();
     this._setupLighting();
@@ -57,6 +94,10 @@ export class PuzzleRenderer {
     this._startRenderLoop();
   }
 
+  /**
+   * Sets up the Three.js scene and puzzle group
+   * @private
+   */
   _setupScene() {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x0a0a0a);
@@ -65,6 +106,10 @@ export class PuzzleRenderer {
     this.scene.add(this.puzzleGroup);
   }
 
+  /**
+   * Configures scene lighting with ambient and directional lights
+   * @private
+   */
   _setupLighting() {
     const ambient = new THREE.AmbientLight(0xffffff, 0.6);
     this.scene.add(ambient);
@@ -78,6 +123,10 @@ export class PuzzleRenderer {
     this.scene.add(dir2);
   }
 
+  /**
+   * Initializes camera with perspective projection and camera controller
+   * @private
+   */
   _setupCamera() {
     const aspect = this.mountElement.clientWidth / this.mountElement.clientHeight;
     this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
@@ -87,6 +136,10 @@ export class PuzzleRenderer {
     this.cameraController.updatePosition();
   }
 
+  /**
+   * Creates and configures the WebGL renderer
+   * @private
+   */
   _setupRenderer() {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setSize(this.mountElement.clientWidth, this.mountElement.clientHeight);
@@ -94,12 +147,20 @@ export class PuzzleRenderer {
     this.mountElement.appendChild(this.renderer.domElement);
   }
 
+  /**
+   * Creates the initial puzzle state and meshes
+   * @private
+   */
   _createPuzzle() {
     this.puzzleState = this.puzzle.createInitialState(this.size);
     this.pieceMeshes = this.puzzle.createPieceMeshes(this.puzzleGroup, this.puzzleState);
     this.puzzleGroup.scale.set(1, 1, 1);
   }
 
+  /**
+   * Binds event listeners for mouse, touch, and window events
+   * @private
+   */
   _setupEventListeners() {
     const canvas = this.renderer.domElement;
     
@@ -122,6 +183,10 @@ export class PuzzleRenderer {
     window.addEventListener('resize', this._boundHandlers.resize);
   }
 
+  /**
+   * Starts the render loop using requestAnimationFrame
+   * @private
+   */
   _startRenderLoop() {
     const animate = () => {
       requestAnimationFrame(animate);
@@ -131,6 +196,12 @@ export class PuzzleRenderer {
   }
 
   // Event handlers
+  /**
+   * Handles pointer down events (mouse and touch)
+   * Initiates drag operations or pinch gestures
+   * 
+   * @param e - Pointer event (MouseEvent or TouchEvent)
+   */
   _handlePointerDown(e) {
     e.preventDefault();
     if (this.isAnimating) return;
@@ -148,6 +219,12 @@ export class PuzzleRenderer {
     this.dragStartIntersection = this._getIntersection(clientX, clientY);
   }
 
+  /**
+   * Handles pointer move events (mouse and touch)
+   * Updates camera rotation, layer rotation, or pinch zoom
+   * 
+   * @param e - Pointer event (MouseEvent or TouchEvent)
+   */
   _handlePointerMove(e) {
     e.preventDefault();
     if (this.isAnimating) return;
@@ -179,6 +256,12 @@ export class PuzzleRenderer {
     }
   }
 
+  /**
+   * Handles pointer move events (mouse and touch)
+   * Updates camera rotation, layer rotation, or pinch zoom
+   * 
+   * @param e - Pointer event (MouseEvent or TouchEvent)
+   */
   _handlePointerUp(e) {
     e.preventDefault();
     
@@ -194,17 +277,34 @@ export class PuzzleRenderer {
     this.dragStartIntersection = null;
   }
 
+  /**
+   * Handles mouse wheel events for camera zoom
+   * 
+   * @param e - Wheel event
+   */
   _handleWheel(e) {
     e.preventDefault();
     this.cameraController.zoom(e.deltaY * 0.001);
   }
 
+  /**
+   * Handles window resize events
+   * Updates camera aspect ratio and renderer size
+   * 
+   * @private
+   */
   _handleResize() {
     this.camera.aspect = this.mountElement.clientWidth / this.mountElement.clientHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(this.mountElement.clientWidth, this.mountElement.clientHeight);
   }
 
+  /**
+   * Extracts pointer coordinates from mouse or touch event
+   * 
+   * @param e - Pointer event (MouseEvent or TouchEvent)
+   * @returns Object with clientX and clientY coordinates
+   */
   _getPointerCoords(e) {
     return {
       clientX: e.clientX || e.touches?.[0].clientX,
@@ -212,6 +312,11 @@ export class PuzzleRenderer {
     };
   }
 
+  /**
+   * Calculates distance between two touch points for pinch gestures
+   * 
+   * @returns Distance in pixels, or 0 if fewer than 2 touches
+   */
   _getPinchDistance() {
     if (this.touches.length < 2) return 0;
     const dx = this.touches[0].clientX - this.touches[1].clientX;
@@ -219,6 +324,13 @@ export class PuzzleRenderer {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
+  /**
+   * Performs raycasting to find puzzle piece intersections
+   * 
+   * @param clientX - Screen X coordinate
+   * @param clientY - Screen Y coordinate
+   * @returns Intersection object containing cubelet mesh, point, and face data, or null if no hit
+   */
   _getIntersection(clientX, clientY) {
     const rect = this.renderer.domElement.getBoundingClientRect();
     this.mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
@@ -243,6 +355,12 @@ export class PuzzleRenderer {
     return null;
   }
 
+  /**
+   * Rotates the camera around the puzzle
+   * 
+   * @param clientX - Current pointer X coordinate
+   * @param clientY - Current pointer Y coordinate
+   */
   _rotateCamera(clientX, clientY) {
     const moveDeltaX = clientX - this.lastMousePos.x;
     const moveDeltaY = clientY - this.lastMousePos.y;
@@ -251,6 +369,14 @@ export class PuzzleRenderer {
     this.lastMousePos = { x: clientX, y: clientY };
   }
 
+  /**
+   * Initiates a layer rotation based on drag input
+   * Creates a temporary rotation group and moves pieces into it
+   * 
+   * @param intersection - Raycasting intersection data
+   * @param deltaX - Horizontal drag distance
+   * @param deltaY - Vertical drag distance
+   */
   _startLayerRotation(intersection, deltaX, deltaY) {
     const rotation = this.puzzle.getRotationFromDrag(
       intersection, 
@@ -280,6 +406,12 @@ export class PuzzleRenderer {
     this.callbacks.onRotationStart?.();
   }
 
+  /**
+   * Updates the visual rotation of the active layer during drag
+   * 
+   * @param deltaX - Total horizontal drag distance from start
+   * @param deltaY - Total vertical drag distance from start
+   */
   _updateLayerRotation(deltaX, deltaY) {
     if (!this.rotatingGroup) return;
     
@@ -295,6 +427,10 @@ export class PuzzleRenderer {
     this.rotatingGroup.group.rotation[this.rotatingGroup.rotation.axis] = angle;
   }
 
+  /**
+   * Completes a layer rotation
+   * Snaps to nearest 90° angle and updates puzzle state if needed
+   */
   _finalizeLayerRotation() {
     if (!this.rotatingGroup) return;
     
@@ -322,6 +458,13 @@ export class PuzzleRenderer {
     });
   }
 
+  /**
+   * Animates rotation from current angle to target angle
+   * 
+   * @param startAngle - Starting rotation angle in radians
+   * @param targetAngle - Target rotation angle in radians
+   * @param onComplete - Callback when animation completes
+   */
   _animateRotation(startAngle, targetAngle, onComplete) {
     this.isAnimating = true;
     const duration = PuzzleRenderer.ROTATION_SNAP_DURATION;
@@ -347,6 +490,12 @@ export class PuzzleRenderer {
     animate();
   }
 
+  /**
+   * Merges rotating group back into main puzzle group
+   * Preserves world transformations of child meshes
+   * 
+   * @param group - Temporary rotation group
+   */
   _mergeRotatingGroup(group) {
     const children = [...group.children];
     children.forEach(child => {
@@ -365,6 +514,10 @@ export class PuzzleRenderer {
   }
 
   // Public API
+  /**
+   * Scrambles the puzzle with random moves
+   * Move count is determined by puzzle size
+   */
   scramble() {
     const moveCount = this.puzzle.getScrambleMoveCount(this.size);
     const axes = ['x', 'y', 'z'];
@@ -380,18 +533,34 @@ export class PuzzleRenderer {
     this.pieceMeshes = this.puzzle.createPieceMeshes(this.puzzleGroup, this.puzzleState);
   }
 
+  /**
+   * Resets puzzle to solved state and resets camera
+   */
   reset() {
     this.puzzleState = this.puzzle.createInitialState(this.size);
     this.pieceMeshes = this.puzzle.createPieceMeshes(this.puzzleGroup, this.puzzleState);
     this.cameraController.reset(this.puzzle.getCameraDistance(this.size));
   }
 
+  /**
+   * Updates the puzzle size variant
+   * Recreates puzzle state and meshes
+   * 
+   * @param newSize - New size variant
+   */
   updateSize(newSize) {
     this.size = newSize;
     this.puzzleState = this.puzzle.createInitialState(this.size);
     this.pieceMeshes = this.puzzle.createPieceMeshes(this.puzzleGroup, this.puzzleState);
   }
 
+  /**
+   * Updates both puzzle type and size simultaneously
+   * Recreates puzzle state, meshes, and adjusts camera distance
+   * 
+   * @param newPuzzle - New puzzle instance
+   * @param newSize - New size variant
+   */
   updatePuzzleAndSize(newPuzzle, newSize) {
     this.puzzle = newPuzzle;
     this.size = newSize;
@@ -402,6 +571,19 @@ export class PuzzleRenderer {
     this.cameraController.setDistance(newDistance);
   }
 
+  /**
+   * Animates a scale transition with optional camera reset
+   * Puzzle scales down, calls midpoint callback, then scales back up
+   * 
+   * @param onMidpoint - Callback executed at animation midpoint
+   * @param resetCamera - Whether to reset camera to default (default: false)
+   * @returns Promise that resolves when animation completes
+   * 
+   * @example
+   * await renderer.animateTransition(() => {
+   *   renderer.scramble();
+   * }, false);
+   */
   animateTransition(onMidpoint, resetCamera = false) {
     return new Promise((resolve) => {
       this.isAnimating = true;
@@ -471,6 +653,17 @@ export class PuzzleRenderer {
     });
   }
 
+  /**
+   * Animates a complete puzzle switch
+   * Scales down old puzzle, swaps to new puzzle, scales up new puzzle
+   * 
+   * @param newPuzzle - New puzzle instance
+   * @param newSize - Size variant for new puzzle
+   * @returns Promise that resolves when animation completes
+   * 
+   * @example
+   * await renderer.animatePuzzleSwitch(new RubiksCube(), 4);
+   */
   animatePuzzleSwitch(newPuzzle, newSize) {
     return new Promise((resolve) => {
       this.isAnimating = true;
@@ -552,6 +745,10 @@ export class PuzzleRenderer {
     });
   }
 
+  /**
+   * Cleans up renderer resources and removes event listeners
+   * Should be called before component unmount
+   */
   dispose() {
     const canvas = this.renderer.domElement;
     canvas.removeEventListener('mousedown', this._boundHandlers.pointerDown);

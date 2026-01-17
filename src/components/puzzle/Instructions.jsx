@@ -1,3 +1,9 @@
+/**
+ * @file Instructions.jsx
+ * @description Displays control instructions for the user
+ * Static component showing keyboard/mouse controls
+ */
+
 export const Instructions = () => (
   <div className="fixed bottom-4 left-4 text-white/50 text-sm bg-black/40 backdrop-blur-sm px-3 py-2 rounded-lg border border-white/10 max-w-xs pointer-events-none">
     <div className="font-semibold mb-1 text-white/70">Controls:</div>

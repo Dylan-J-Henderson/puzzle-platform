@@ -1,3 +1,15 @@
+/**
+ * @file PuzzleSelector.jsx
+ * @description Size selection dropdown for current puzzle
+ * 
+ * @param {Object} props
+ * @param {TwistyPuzzle} props.puzzle - Current puzzle instance
+ * @param {number} props.size - Current size
+ * @param {Function} props.onSizeChange - Size change callback
+ * @param {Function} props.onPuzzleChange - Puzzle change callback
+ * @param {boolean} props.disabled - Whether selector is disabled
+ */
+
 export const PuzzleSelector = ({ puzzle, size, onSizeChange, onPuzzleChange, disabled }) => {
   const variants = puzzle.getSizeVariants();
 
