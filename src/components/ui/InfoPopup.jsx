@@ -5,7 +5,7 @@
  * 
  * @module components/ui/InfoPopup
  * @requires react
- * @requires ../../config/popupStyles
+ * @requires ../../config/PopupStyles
  * 
  * @example
  * // Basic usage with info type

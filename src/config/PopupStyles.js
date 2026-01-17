@@ -1,24 +1,24 @@
 /**
- * @file popupStyles.js
- * @description Configuration file for popup styling and content paths.
+ * @file PopupStyles.js
+ * @description Configuration file for popup styling and static content.
  * Centralizes all popup-related configuration for easy maintenance and consistency.
  * 
  * @module config/popupStyles
  * 
  * This file contains:
  * - Visual style configurations for different popup types
- * - Content file paths for markdown-based popups
+ * - Imported markdown content for popups
  * - Reusable styling constants
  * 
  * @example
  * // Using popup styles
- * import { POPUP_STYLES } from './config/popupStyles';
+ * import { POPUP_STYLES } from './config/PopupStyles';
  * const style = POPUP_STYLES.warning;
  * 
  * @example
- * // Using content paths
- * import { CONTENT_PATHS } from './config/popupStyles';
- * const content = await fetch(CONTENT_PATHS.disclaimer);
+ * // Using content
+ * import { CONTENT } from './config/PopupStyles';
+ * const disclaimerText = CONTENT.disclaimer;
  */
 
 /**
@@ -101,44 +101,46 @@ export const POPUP_STYLES = {
 };
 
 /**
- * Content file paths for markdown-based popups
+ * Import markdown files as raw text using Vite's ?raw suffix
  * 
- * All paths are relative to the public directory. Files should be placed
- * in public/content/ for proper serving by the development and production servers.
+ * These imports load the content of markdown files at build time,
+ * making them immediately available without async loading.
+ * 
+ * Files are located in: src/content/
+ * 
+ * @see {@link https://vitejs.dev/guide/assets.html#importing-asset-as-string|Vite Asset Handling}
+ */
+import disclaimerContent from '../content/disclaimer.md?raw';
+import welcomeContent from '../content/welcome.md?raw';
+import instructionsContent from '../content/instructions.md?raw';
+
+/**
+ * Static markdown content for popups
+ * 
+ * All content is imported at build time and available synchronously.
+ * Content is loaded from markdown files in the src/content/ directory.
  * 
  * @constant {Object.<string, string>}
  * 
- * @property {string} disclaimer - Path to disclaimer markdown file
- * @property {string} welcome - Path to welcome/tutorial markdown file
- * @property {string} instructions - Path to instructions markdown file
+ * @property {string} disclaimer - Disclaimer markdown content (project status, feature availability)
+ * @property {string} welcome - Welcome/tutorial markdown content
+ * @property {string} instructions - Usage instructions markdown content
  * 
  * @example
- * // Load disclaimer content
- * const content = await fetch(CONTENT_PATHS.disclaimer)
- *   .then(res => res.text());
+ * // Use in a component
+ * import { CONTENT } from './config/popupStyles';
+ * 
+ * const MyComponent = () => {
+ *   return <MarkdownRenderer markdown={CONTENT.disclaimer} />;
+ * };
  * 
  * @example
- * // Use with ContentLoader
- * import { ContentLoader } from '../utils/ContentLoader';
- * const loader = ContentLoader.getInstance();
- * const instructions = await loader.load(CONTENT_PATHS.instructions);
+ * // Access specific content
+ * const disclaimerText = CONTENT.disclaimer;
+ * console.log(disclaimerText); // Full markdown string
  */
-export const CONTENT_PATHS = {
-  /**
-   * Disclaimer content file
-   * Shows project status and feature availability
-   */
-  disclaimer: '/content/disclaimer.md',
-
-  /**
-   * Welcome/tutorial content file
-   * Introduces users to the application (future implementation)
-   */
-  welcome: '/content/welcome.md',
-
-  /**
-   * Instructions content file
-   * Detailed usage instructions (future implementation)
-   */
-  instructions: '/content/instructions.md'
+export const CONTENT = {
+  disclaimer: disclaimerContent,
+  welcome: welcomeContent,
+  instructions: instructionsContent
 };
