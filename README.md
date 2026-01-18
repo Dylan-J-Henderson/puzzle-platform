@@ -22,7 +22,7 @@ An interactive 3D puzzle simulator built with React and Three.js, featuring a fu
 | Zoom in/out | Scroll wheel or pinch (mobile) |
 | Scramble | Click "Scramble" button |
 | Reset | Click "Reset" button |
-| Change size | Select from dropdown menu |
+| Select puzzle | Select from dropdown menu |
 
 ## Getting Started
 
@@ -158,7 +158,7 @@ Encapsulates camera positioning using spherical coordinates:
 
 This separation keeps camera logic independent from rendering concerns.
 
-#### MarkdownParser
+#### MarkdownRenderer
 
 Converts markdown syntax into structured data for rendering:
 
